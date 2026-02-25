@@ -1,0 +1,26 @@
+# Python
+*__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.venv/
+env/
+venv/
+*.sqlite3
+*.log
+
+# Bun / Node
+node_modules/
+dist/
+*.lock
+*.tsbuildinfo
+*.cache/
+
+
+# Logs
+*.log
+
+# Storages
+# data/
+# .vector_store
