@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Examora Teacher Console</title>
+  <link rel="stylesheet" href="/frontend/styles.css">
+</head>
+<body>
+  <main class="app-shell">
+    <aside class="card sidebar">
+      <div class="card-head">
+        <p class="eyebrow">CBSE X Board Paper Builder</p>
+        <h1>Examora Teacher Console</h1>
+      </div>
+
+      <form id="paper-form" class="stack">
+        <div class="field">
+          <label for="subject">Subject</label>
+          <select id="subject" required></select>
+        </div>
+
+        <div class="field">
+          <label>Portion Scope</label>
+          <div class="segment">
+            <label class="chip"><input type="radio" name="portion" value="full" checked> Full Portion</label>
+            <label class="chip"><input type="radio" name="portion" value="chapters"> Chapters</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="chapters">Chapters</label>
+          <select id="chapters" multiple size="8" disabled></select>
+          <p class="hint">Hold Ctrl/Cmd to choose multiple chapters.</p>
+        </div>
+
+        <div class="field">
+          <label>Marks Mix</label>
+          <div class="marks-grid">
+            <label class="chip"><input type="checkbox" name="marks" value="1" checked> 1 Mark</label>
+            <label class="chip"><input type="checkbox" name="marks" value="2" checked> 2 Marks</label>
+            <label class="chip"><input type="checkbox" name="marks" value="3" checked> 3 Marks</label>
+            <label class="chip"><input type="checkbox" name="marks" value="5" checked> 5 Marks</label>
+          </div>
+        </div>
+
+        <div class="double">
+          <div class="field">
+            <label for="difficulty">Difficulty</label>
+            <select id="difficulty">
+              <option value="easy">Easy</option>
+              <option value="moderate" selected>Moderate</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="question_type">Type Bias</label>
+            <select id="question_type">
+              <option value="board-mix" selected>Board Mix</option>
+              <option value="competency">Competency</option>
+              <option value="case-based">Case Based</option>
+              <option value="pyq-pattern">PYQ Pattern</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="additional_instructions">Extra Instructions</label>
+          <textarea id="additional_instructions" rows="3" placeholder="Include assertion-reason and competency questions."></textarea>
+        </div>
+
+        <div class="actions">
+          <button type="submit" id="generate-btn" class="btn btn-primary">Generate Paper</button>
+          <button type="button" id="print-btn" class="btn btn-secondary" disabled>Print / Save PDF</button>
+        </div>
+      </form>
+    </aside>
+
+    <section class="card preview-card">
+      <div class="preview-toolbar">
+        <h2>Preview</h2>
+        <span id="status" class="badge">Ready</span>
+      </div>
+      <iframe id="paper-preview" title="Paper Preview"></iframe>
+    </section>
+  </main>
+
+  <script src="/frontend/app.js"></script>
+</body>
+</html>
