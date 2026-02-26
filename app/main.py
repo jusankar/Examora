@@ -3,11 +3,12 @@ import os
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
-from app.routes import question_routes
+from app.routes import evaluation_routes, question_routes
 
 app = FastAPI(title="Examora API")
 
 app.include_router(question_routes.router)
+app.include_router(evaluation_routes.router)
 teacher_dist_dir = os.path.join("frontend-shadcn", "dist")
 legacy_frontend_dir = "frontend"
 teacher_public_dir = os.path.join("frontend-shadcn", "public")

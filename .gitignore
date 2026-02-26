@@ -26,3 +26,5 @@ frontend-shadcn/dist/
 # Storages
 # data/
 # .vector_store
+data/evaluations/
+data/question_papers/

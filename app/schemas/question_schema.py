@@ -23,3 +23,5 @@ class PaperRequest(BaseModel):
     difficulty: str = "moderate"
     question_type: str = "board-mix"
     additional_instructions: str | None = None
+    save_paper: bool = True
+    paper_name: str | None = None

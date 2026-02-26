@@ -1,7 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from app.schemas.question_schema import IngestRequest, PaperRequest, QuestionRequest
 from core.rag.ingest import ingest_folder
 from core.rag.generator import generate_question
+from core.rag.paper_library import delete_question_paper, get_question_paper, list_question_papers, save_question_paper
 from core.rag.paper_generator import (
     generate_paper,
     get_chapters_for_subject,
@@ -48,4 +49,35 @@ def chapters(subject: str):
 @router.post("/generate-paper")
 def build_paper(req: PaperRequest):
     result = generate_paper(req.model_dump())
-    return {"status": "ok", **result}
+    saved = None
+    if req.save_paper:
+        saved = save_question_paper(
+            subject=req.subject,
+            payload=result,
+            config=req.model_dump(),
+            paper_name=req.paper_name,
+        )
+    return {"status": "ok", **result, "saved_paper": saved}
+
+
+@router.get("/papers")
+def list_papers():
+    return {"status": "ok", "papers": list_question_papers()}
+
+
+@router.get("/papers/{paper_id}")
+def get_paper(paper_id: str):
+    try:
+        paper = get_question_paper(paper_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"status": "ok", "paper": paper}
+
+
+@router.delete("/papers/{paper_id}")
+def delete_paper(paper_id: str):
+    try:
+        delete_question_paper(paper_id)
+    except FileNotFoundError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return {"status": "ok", "deleted": paper_id}
