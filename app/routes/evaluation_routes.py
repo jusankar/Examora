@@ -87,7 +87,12 @@ def get_corrected_pdf(evaluation_id: str):
     pdf_path = payload.get("corrected_pdf_path")
     if not pdf_path or not os.path.exists(pdf_path):
         raise HTTPException(status_code=404, detail="Corrected PDF not found.")
-    return FileResponse(pdf_path, media_type="application/pdf", filename=f"{evaluation_id}_corrected.pdf")
+    return FileResponse(
+        pdf_path,
+        media_type="application/pdf",
+        filename=f"{evaluation_id}_corrected.pdf",
+        content_disposition_type="inline",
+    )
 
 
 @router.delete("/{evaluation_id}")

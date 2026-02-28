@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ChevronDown, ChevronLeft, ChevronRight, Loader2, Trash2 } from "lucide-react";
+import { ChevronDown, ChevronLeft, ChevronRight, Loader2, Moon, Sun, Trash2 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 
 type TabMode = "question" | "evaluation";
+type ThemeMode = "light" | "dark";
 
 type GeneratePayload = {
   subject: string;
@@ -40,10 +41,11 @@ type EvalRow = {
 const MARK_OPTIONS = [1, 2, 3, 5];
 
 export default function App() {
-  const appVersion = "v0.4.0";
+  const appVersion = "v0.5.0";
   const [activeTab, setActiveTab] = useState<TabMode>("question");
   const [status, setStatus] = useState("Ready");
   const [isBusy, setIsBusy] = useState(false);
+  const [theme, setTheme] = useState<ThemeMode>("light");
 
   const [subjects, setSubjects] = useState<string[]>([]);
   const [subject, setSubject] = useState("");
@@ -71,6 +73,22 @@ export default function App() {
   const [correctedPdfUrl, setCorrectedPdfUrl] = useState("");
   const [evaluationSummary, setEvaluationSummary] = useState("");
   const [evaluationScore, setEvaluationScore] = useState("");
+
+  useEffect(() => {
+    const stored = window.localStorage.getItem("examora-theme");
+    if (stored === "light" || stored === "dark") {
+      setTheme(stored);
+      return;
+    }
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setTheme(prefersDark ? "dark" : "light");
+  }, []);
+
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    window.localStorage.setItem("examora-theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     void loadSubjects();
@@ -305,7 +323,7 @@ export default function App() {
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-[1800px] items-center justify-between px-4">
+        <div className="mx-auto flex min-h-14 max-w-[1800px] items-center justify-between gap-3 px-4 py-2">
           <div className="flex items-center gap-2">
             <img src="/logo-mark.svg" alt="Examora" className="h-8 w-8 rounded-md" />
             <div>
@@ -313,7 +331,18 @@ export default function App() {
               <p className="text-xs text-muted-foreground">Question Preparation & Answer Correction</p>
             </div>
           </div>
-          <Badge variant="outline">{status}</Badge>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setTheme((prev) => (prev === "dark" ? "light" : "dark"))}
+              className="gap-2"
+            >
+              {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+              {theme === "dark" ? "Light" : "Dark"}
+            </Button>
+            <Badge variant="outline">{status}</Badge>
+          </div>
         </div>
       </header>
 
@@ -615,6 +644,15 @@ export default function App() {
                 </div>
                 {evaluationSummary ? <div className="rounded-md border border-border bg-muted p-3 text-sm">{evaluationSummary}</div> : null}
                 <iframe title="corrected-pdf-preview" src={correctedPdfUrl} className="h-[56vh] w-full rounded-md border border-border" />
+                {correctedPdfUrl ? (
+                  <div className="text-sm text-muted-foreground">
+                    If preview does not load,{" "}
+                    <a href={correctedPdfUrl} target="_blank" rel="noreferrer" className="text-primary underline">
+                      open corrected PDF in new tab
+                    </a>
+                    .
+                  </div>
+                ) : null}
                 <div className="flex justify-end">
                   <Button variant="secondary" onClick={printCorrectedPdf} disabled={!correctedPdfUrl}>
                     Print Corrected PDF
